@@ -1,0 +1,135 @@
+@page
+@model OnlineShop.Web.Pages.CartModel
+@{
+    ViewData["Title"] = "Gi? hàng";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+<div class="container my-5">
+    <h1 class="mb-4">Gi? hàng</h1>
+
+    @if (TempData["CartMessage"] != null)
+    {
+        <div class="alert alert-info">@TempData["CartMessage"]</div>
+    }
+
+    @if (Model.Cart.Items.Count == 0)
+    {
+        <div class="card p-4">
+            <div class="card-body text-center">
+                <h5 class="card-title">Gi? hàng c?a b?n ?ang tr?ng</h5>
+                <p class="card-text">Hãy thêm s?n ph?m vào gi? ?? b?t ??u mua s?m.</p>
+                <a href="/Products" class="btn btn-primary">Ti?p t?c mua s?m</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <form method="post" asp-page-handler="Update">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width:60%">S?n ph?m</th>
+                                    <th style="width:10%">Giá</th>
+                                    <th style="width:15%">S? l??ng</th>
+                                    <th style="width:10%" class="text-end">T?ng</th>
+                                    <th style="width:5%"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.Cart.Items.Count; i++)
+                                {
+                                    var item = Model.Cart.Items[i];
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="@(string.IsNullOrEmpty(item.ThumbnailUrl) ? "/images/no-image.png" : item.ThumbnailUrl)" alt="@item.Name" class="me-3 rounded" style="width:84px;height:84px;object-fit:cover;" />
+                                                <div>
+                                                    <div class="fw-bold">@item.Name</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="align-middle">@item.Price.ToString("N0") ?</td>
+                                        <td>
+                                            <div class="input-group input-group-sm" style="max-width:140px">
+                                                <button type="button" class="btn btn-outline-secondary" onclick="decrement(this)">-</button>
+                                                <input type="hidden" name="ProductIds" value="@item.ProductId" />
+                                                <input type="number" name="Quantities" value="@item.Quantity" min="0" class="form-control text-center" />
+                                                <button type="button" class="btn btn-outline-secondary" onclick="increment(this)">+</button>
+                                            </div>
+                                        </td>
+                                        <td class="text-end align-middle">@item.Total.ToString("N0") ?</td>
+                                        <td class="align-middle text-end">
+                                            <!-- Use formaction to call Remove handler without nesting forms -->
+                                            <button type="submit" formaction="?handler=Remove" formmethod="post" name="productId" value="@item.ProductId" class="btn btn-sm btn-danger">Xóa</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div>
+                            <button type="submit" class="btn btn-primary">C?p nh?t gi? hàng</button>
+                            <button type="submit" formaction="?handler=Clear" formmethod="post" class="btn btn-outline-warning ms-2">Xóa t?t c?</button>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted">T?ng items: <strong>@Model.Cart.Items.Count</strong></small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Tóm t?t ??n hàng</h5>
+                        <ul class="list-group mb-3">
+                            @foreach (var it in Model.Cart.Items)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="small">@it.Name</div>
+                                        <div class="text-muted small">@it.Quantity x @it.Price.ToString("N0") ?</div>
+                                    </div>
+                                    <div class="fw-semibold">@it.Total.ToString("N0") ?</div>
+                                </li>
+                            }
+                        </ul>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <div class="text-muted">T?m tính</div>
+                            <div>@Model.Cart.GrandTotal.ToString("N0") ?</div>
+                        </div>
+
+                        <div class="d-grid">
+                            <a href="/Checkout" class="btn btn-success btn-lg">Thanh toán ngay</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-3 text-center text-muted small">
+                    <p class="mb-0">Mi?n phí v?n chuy?n cho ??n hàng trên 1,000,000 ?</p>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    function increment(btn) {
+        var input = btn.parentElement.querySelector('input[type="number"]');
+        if (!input) return;
+        input.stepUp(1);
+    }
+    function decrement(btn) {
+        var input = btn.parentElement.querySelector('input[type="number"]');
+        if (!input) return;
+        if (parseInt(input.value) > parseInt(input.min || 0)) input.stepDown(1);
+    }
+</script>

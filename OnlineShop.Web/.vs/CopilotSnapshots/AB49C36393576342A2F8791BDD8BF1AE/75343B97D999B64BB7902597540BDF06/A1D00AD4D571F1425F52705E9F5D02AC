@@ -1,0 +1,29 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using OnlineShop.Web.Services;
+using OnlineShop.Web.Models;
+
+namespace OnlineShop.Web.Controllers
+{
+    public class BlogController : Controller
+    {
+        private readonly PortService _portService;
+
+        public BlogController(PortService portService)
+        {
+            _portService = portService;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var list = await _portService.GetAllAsync() ?? new List<PortViewModel>();
+            return View("~/Views/Blog/Index.cshtml", list);
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var post = await _portService.GetAsync(id);
+            if (post == null) return NotFound();
+            return View("~/Views/Blog/Details.cshtml", post);
+        }
+    }
+}

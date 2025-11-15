@@ -1,0 +1,82 @@
+@inject IHttpContextAccessor HttpContextAccessor
+
+<header>
+    <nav class="navbar navbar-expand-lg bg-black" data-bs-theme="dark">
+        <div class="container">
+
+            <a class="navbar-brand" href="/">
+                <img src="/images/logo.png" alt="Logo" style="height: 40px;" class="d-inline-block align-text-top">
+                <span class="ms-2 fs-4 fw-bold">YourShop</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainNavbar">
+
+                <!-- Menu trái -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="/Home">Trang chủ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Products">Sản phẩm</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Blog">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/About">Giới thiệu</a></li>
+                </ul>
+
+                <!-- Search -->
+                <form class="d-flex me-3 my-2 my-lg-0" role="search">
+                    <input class="form-control" type="search" placeholder="Tìm kiếm..." aria-label="Search">
+                    <button class="btn btn-outline-light" type="submit" style="margin-left: -1px;">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+
+                <!-- Menu phải -->
+                <div class="d-flex align-items-center">
+
+                    <!-- Giỏ hàng -->
+                    <a href="/Cart" class="nav-link text-white me-3 d-flex align-items-center">
+                        <i class="bi bi-cart me-1 fs-5"></i>
+                        <span class="d-none d-lg-inline">Giỏ hàng</span>
+                    </a>
+
+                    @{
+                        var userId = HttpContextAccessor.HttpContext.Session.GetInt32("UserId");
+                        var userName = HttpContextAccessor.HttpContext.Session.GetString("UserName");
+                        var roleId = HttpContextAccessor.HttpContext.Session.GetInt32("RoleId");
+                    }
+
+                    @if (userId == null)
+                    {
+                        <!-- Chưa đăng nhập -->
+                    <a href="/Account/Login" class="btn btn-light text-black fw-medium me-2">
+                        Đăng nhập
+                    </a>
+                    <a href="/Account/Register" class="btn btn-outline-light fw-medium">
+                        Đăng ký
+                    </a>
+                    }
+                    else
+                    {
+ <!-- Đã đăng nhập -->
+                    <span class="text-white me-3">
+                        👋 Xin chào, <b>@userName</b>
+                    </span>
+
+                    @if (roleId == 1)
+                        {
+                    <a href="/Admin" class="btn btn-warning fw-medium me-2">
+                        Quản trị
+                    </a>
+                        }
+
+                    <a href="/Account/Logout" class="btn btn-danger fw-medium">
+                        Đăng xuất
+                    </a>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </nav>
+</header>

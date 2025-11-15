@@ -1,0 +1,46 @@
+﻿@model OnlineShop.Web.Models.ProductViewModel
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Sửa sản phẩm";
+}
+
+<div class="container mt-4">
+    <h2>Sửa sản phẩm</h2>
+
+    <form asp-action="Edit" enctype="multipart/form-data" method="post">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="form-group">
+            <label>Tên sản phẩm</label>
+            <input asp-for="Name" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>Giá</label>
+            <input asp-for="Price" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>Tồn kho</label>
+            <input asp-for="Stock" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>Mô tả</label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Danh mục</label>
+            <select asp-for="CategoryId" class="form-control" asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))"></select>
+        </div>
+
+        <div class="form-group">
+            <label>Ảnh sản phẩm</label>
+            <input type="file" asp-for="ImageFile" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Cập nhật</button>
+        <a asp-action="Index" class="btn btn-secondary mt-3">Quay lại</a>
+    </form>
+</div>

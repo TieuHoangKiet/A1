@@ -1,0 +1,96 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using OnlineShop.Api.Data;
+using OnlineShop.Api.Models;
+
+namespace OnlineShop.Api.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class PortsController : ControllerBase
+    {
+        private readonly ShopDbContext _context;
+        private readonly ILogger<PortsController> _logger;
+
+        public PortsController(ShopDbContext context, ILogger<PortsController> logger)
+        {
+            _context = context;
+            _logger = logger;
+        }
+
+        // GET: api/Ports
+        [HttpGet]
+        public IActionResult GetPorts()
+        {
+            try
+            {
+                // Try normal EF query first (handles mapped table)
+                var list = _context.Set<Port>()
+                    .Where(p => p.IsActive == true)
+                    .OrderByDescending(p => p.CreatedAt)
+                    .ToList();
+
+                if (list != null && list.Count > 0)
+                    return Ok(list);
+
+                // If no results, try less strict filter (IsActive null or true)
+                var list2 = _context.Set<Port>()
+                    .Where(p => p.IsActive == null || p.IsActive == true)
+                    .OrderByDescending(p => p.CreatedAt)
+                    .ToList();
+
+                if (list2 != null && list2.Count > 0)
+                    return Ok(list2);
+
+                // If still empty, attempt raw SQL fallback with common table name variations
+                var tableCandidates = new[] { "dbo.post", "post", "dbo.posts", "posts", "Post", "Posts" };
+                var aggregateErrors = new List<string>();
+
+                foreach (var tbl in tableCandidates)
+                {
+                    try
+                    {
+                        var sql = $"SELECT TOP (50) * FROM {tbl}";
+                        var raw = _context.Set<Port>().FromSqlRaw(sql).ToList();
+                        if (raw != null && raw.Count > 0)
+                        {
+                            _logger.LogInformation("Ports loaded via raw SQL from {Table}", tbl);
+                            return Ok(raw);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        aggregateErrors.Add($"{tbl}: {ex.Message}");
+                        // continue trying other table names
+                    }
+                }
+
+                // Nothing found; return empty list (200) to avoid breaking front-end
+                _logger.LogInformation("No posts found in any candidate tables. Errors: {Errors}", string.Join(" | ", aggregateErrors));
+                return Ok(new List<Port>());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while fetching ports");
+                return Problem(detail: ex.Message, statusCode: 500, title: "Internal Server Error");
+            }
+        }
+
+        // GET: api/Ports/5
+        [HttpGet("{id}")]
+        public IActionResult GetPort(int id)
+        {
+            try
+            {
+                var port = _context.Set<Port>().Find(id);
+                if (port == null) return NotFound();
+                return Ok(port);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while fetching port {Id}", id);
+                return Problem(detail: ex.Message, statusCode: 500, title: "Internal Server Error");
+            }
+        }
+    }
+}

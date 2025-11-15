@@ -1,0 +1,51 @@
+﻿@model OnlineShop.Web.Models.Order
+
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Chi tiết đơn hàng";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Chi tiết đơn hàng #@Model.Id</h2>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <p><strong>Khách hàng:</strong> @Model.ShipName</p>
+            <p><strong>Số điện thoại:</strong> @Model.ShipPhone</p>
+            <p><strong>Địa chỉ:</strong> @Model.ShipAddress</p>
+            <p><strong>Ngày đặt:</strong> @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+            <p><strong>Trạng thái:</strong> @Model.Status</p>
+            <p><strong>Tổng tiền:</strong> @Model.Total.ToString("N0") đ</p>
+        </div>
+    </div>
+
+    <h4 class="fw-bold">Danh sách sản phẩm</h4>
+
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>Sản phẩm</th>
+                <th>Ảnh</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <th>Thành tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.OrderItems)
+            {
+            <tr>
+                <td>@item.Product?.Name</td>
+                <td>
+                    <img src="@item.Product?.ThumbnailUrl" width="60" height="60" />
+                </td>
+                <td>@item.Price.ToString("N0") đ</td>
+                <td>@item.Quantity</td>
+                <td>@(item.Price * item.Quantity).ToString("N0") đ</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+
+    <a href="/AdminOrder" class="btn btn-secondary mt-3">Quay lại</a>
+</div>

@@ -1,0 +1,82 @@
+﻿@model List<OnlineShop.Web.Models.CartItem>
+
+<h2 class="mb-4">Giỏ hàng của bạn</h2>
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-info">
+        <p class="mb-0">Giỏ hàng của bạn đang trống.</p>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-2">Tiếp tục mua sắm</a>
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col-lg-8">
+            @foreach (var item in Model)
+            {
+                <div class="card mb-3 cart-item-row">
+                    <div class="row g-0">
+                        <div class="col-md-2 d-flex align-items-center justify-content-center p-2">
+                            <img src="@item.ThumbnailUrl" class="img-fluid rounded" alt="@item.Name" style="max-height: 100px; max-width: 100px; object-fit: contain;">
+                        </div>
+                        <div class="col-md-10">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="card-title">@item.Name</h5>
+                                    <a asp-action="Remove" asp-route-id="@item.ProductId" class="btn-close" title="Xóa"></a>
+                                </div>
+
+                                <p class="card-text text-danger fw-bold">@item.Price.ToString("N0") đ</p>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center quantity-control">
+                                        <form asp-action="DecreaseQuantity" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@item.ProductId" />
+                                            <button type="submit" class="btn btn-outline-secondary btn-sm">-</button>
+                                        </form>
+
+                                        <span class="quantity-display mx-3">@item.Quantity</span>
+
+                                        <form asp-action="IncreaseQuantity" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@item.ProductId" />
+                                            <button type="submit" class="btn btn-outline-secondary btn-sm">+</button>
+                                        </form>
+                                    </div>
+
+                                    <div>
+                                        <span>Tổng: </span>
+                                        <span class="fw-bold fs-5">@item.Total.ToString("N0") đ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card cart-summary">
+                <div class="card-body">
+                    <h5 class="card-title">Tóm tắt đơn hàng</h5>
+                    <div class="d-flex justify-content-between my-3">
+                        <span>Tạm tính:</span>
+                        <span>@Model.Sum(x => x.Total).ToString("N0") đ</span>
+                    </div>
+                    <div class="d-flex justify-content-between my-3">
+                        <span>Phí vận chuyển:</span>
+                        <span>Miễn phí</span>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between fw-bold fs-5">
+                        <span>Tổng cộng:</span>
+                        <span class="text-danger">@Model.Sum(x => x.Total).ToString("N0") đ</span>
+                    </div>
+
+                    <a asp-action="Checkout" class="btn btn-success w-100 mt-3">TIẾN HÀNH THANH TOÁN</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,60 @@
+﻿@page
+@model OnlineShop.Web.Pages.CartModel
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+<h2>Giỏ hàng</h2>
+@if (Model.Cart.Items.Count == 0)
+{
+    <div>Giỏ hàng của bạn đang trống.</div>
+}
+else
+{
+    <form method="post">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Sản phẩm</th>
+                    <th>Hình ảnh</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Tổng</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Cart.Items.Count; i++)
+                {
+                    var item = Model.Cart.Items[i];
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.ThumbnailUrl))
+                            {
+                                <img src="@item.ThumbnailUrl" width="60" />
+                            }
+                        </td>
+                        <td>@item.Price.ToString("N0")</td>
+                        <td>
+                            <input type="number" name="Quantities" value="@item.Quantity" min="1" style="width:60px" />
+                            <input type="hidden" name="ProductIds" value="@item.ProductId" />
+                        </td>
+                        <td>@item.Total.ToString("N0")</td>
+                        <td>
+                            <button type="submit" name="remove" value="@item.ProductId" class="btn btn-danger btn-sm">Xóa</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="text-end">
+            <strong>Tổng cộng: @Model.Cart.GrandTotal.ToString("N0")</strong>
+        </div>
+        <div class="mt-3">
+            <button type="submit" name="update" value="1" class="btn btn-primary">Cập nhật giỏ hàng</button>
+            <button type="submit" name="clear" value="1" class="btn btn-warning">Xóa tất cả</button>
+            <a href="/Checkout" class="btn btn-success">Thanh toán</a>
+        </div>
+    </form>
+}

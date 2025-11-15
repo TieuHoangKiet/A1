@@ -1,0 +1,185 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\2025\\r1\\be2025\\OnlineShop.Web\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{5380E3A1-70F4-4A33-B3B4-4AAE82044D02}|OnlineShop.Web.csproj|d:\\2025\\r1\\be2025\\onlineshop.web\\controllers\\cartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5380E3A1-70F4-4A33-B3B4-4AAE82044D02}|OnlineShop.Web.csproj|solutionrelative:controllers\\cartcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5380E3A1-70F4-4A33-B3B4-4AAE82044D02}|OnlineShop.Web.csproj|d:\\2025\\r1\\be2025\\onlineshop.web\\models\\loginrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5380E3A1-70F4-4A33-B3B4-4AAE82044D02}|OnlineShop.Web.csproj|solutionrelative:models\\loginrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5380E3A1-70F4-4A33-B3B4-4AAE82044D02}|OnlineShop.Web.csproj|d:\\2025\\r1\\be2025\\onlineshop.web\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{5380E3A1-70F4-4A33-B3B4-4AAE82044D02}|OnlineShop.Web.csproj|solutionrelative:wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5380E3A1-70F4-4A33-B3B4-4AAE82044D02}|OnlineShop.Web.csproj|d:\\2025\\r1\\be2025\\onlineshop.web\\views\\cart\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{5380E3A1-70F4-4A33-B3B4-4AAE82044D02}|OnlineShop.Web.csproj|solutionrelative:views\\cart\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5380E3A1-70F4-4A33-B3B4-4AAE82044D02}|OnlineShop.Web.csproj|d:\\2025\\r1\\be2025\\onlineshop.web\\controllers\\admin\\ adminordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5380E3A1-70F4-4A33-B3B4-4AAE82044D02}|OnlineShop.Web.csproj|solutionrelative:controllers\\admin\\ adminordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5380E3A1-70F4-4A33-B3B4-4AAE82044D02}|OnlineShop.Web.csproj|d:\\2025\\r1\\be2025\\onlineshop.web\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5380E3A1-70F4-4A33-B3B4-4AAE82044D02}|OnlineShop.Web.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5380E3A1-70F4-4A33-B3B4-4AAE82044D02}|OnlineShop.Web.csproj|d:\\2025\\r1\\be2025\\onlineshop.web\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5380E3A1-70F4-4A33-B3B4-4AAE82044D02}|OnlineShop.Web.csproj|solutionrelative:controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5380E3A1-70F4-4A33-B3B4-4AAE82044D02}|OnlineShop.Web.csproj|d:\\2025\\r1\\be2025\\onlineshop.web\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5380E3A1-70F4-4A33-B3B4-4AAE82044D02}|OnlineShop.Web.csproj|solutionrelative:controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5380E3A1-70F4-4A33-B3B4-4AAE82044D02}|OnlineShop.Web.csproj|d:\\2025\\r1\\be2025\\onlineshop.web\\models\\accountuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5380E3A1-70F4-4A33-B3B4-4AAE82044D02}|OnlineShop.Web.csproj|solutionrelative:models\\accountuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5380E3A1-70F4-4A33-B3B4-4AAE82044D02}|OnlineShop.Web.csproj|d:\\2025\\r1\\be2025\\onlineshop.web\\models\\loginresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5380E3A1-70F4-4A33-B3B4-4AAE82044D02}|OnlineShop.Web.csproj|solutionrelative:models\\loginresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{0ad07096-bba9-4900-a651-0598d26f6d24}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "site.css",
+              "DocumentMoniker": "D:\\2025\\r1\\be2025\\OnlineShop.Web\\wwwroot\\css\\site.css",
+              "RelativeDocumentMoniker": "wwwroot\\css\\site.css",
+              "ToolTip": "D:\\2025\\r1\\be2025\\OnlineShop.Web\\wwwroot\\css\\site.css",
+              "RelativeToolTip": "wwwroot\\css\\site.css",
+              "ViewState": "AgIAABcAAAAAAAAAAAAwwC4AAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-11-15T22:53:35.142Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "D:\\2025\\r1\\be2025\\OnlineShop.Web\\Views\\Cart\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\Cart\\Index.cshtml",
+              "ToolTip": "D:\\2025\\r1\\be2025\\OnlineShop.Web\\Views\\Cart\\Index.cshtml",
+              "RelativeToolTip": "Views\\Cart\\Index.cshtml",
+              "ViewState": "AgIAADAAAAAAAAAAAAAowFEAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-15T22:53:11.775Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CartController.cs",
+              "DocumentMoniker": "D:\\2025\\r1\\be2025\\OnlineShop.Web\\Controllers\\CartController.cs",
+              "RelativeDocumentMoniker": "Controllers\\CartController.cs",
+              "ToolTip": "D:\\2025\\r1\\be2025\\OnlineShop.Web\\Controllers\\CartController.cs",
+              "RelativeToolTip": "Controllers\\CartController.cs",
+              "ViewState": "AgIAAKQAAAAAAAAAAAAowMUAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-15T22:52:40.166Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": " AdminOrderController.cs",
+              "DocumentMoniker": "D:\\2025\\r1\\be2025\\OnlineShop.Web\\Controllers\\Admin\\ AdminOrderController.cs",
+              "RelativeDocumentMoniker": "Controllers\\Admin\\ AdminOrderController.cs",
+              "ToolTip": "D:\\2025\\r1\\be2025\\OnlineShop.Web\\Controllers\\Admin\\ AdminOrderController.cs",
+              "RelativeToolTip": "Controllers\\Admin\\ AdminOrderController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-15T13:07:26.51Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ProductsController.cs",
+              "DocumentMoniker": "D:\\2025\\r1\\be2025\\OnlineShop.Web\\Controllers\\ProductsController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ProductsController.cs",
+              "ToolTip": "D:\\2025\\r1\\be2025\\OnlineShop.Web\\Controllers\\ProductsController.cs",
+              "RelativeToolTip": "Controllers\\ProductsController.cs",
+              "ViewState": "AgIAADsAAAAAAAAAAABBwDwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-15T13:07:26.455Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "AccountUser.cs",
+              "DocumentMoniker": "D:\\2025\\r1\\be2025\\OnlineShop.Web\\Models\\AccountUser.cs",
+              "RelativeDocumentMoniker": "Models\\AccountUser.cs",
+              "ToolTip": "D:\\2025\\r1\\be2025\\OnlineShop.Web\\Models\\AccountUser.cs",
+              "RelativeToolTip": "Models\\AccountUser.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAAwAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-15T13:07:26.513Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "LoginResponse.cs",
+              "DocumentMoniker": "D:\\2025\\r1\\be2025\\OnlineShop.Web\\Models\\LoginResponse.cs",
+              "RelativeDocumentMoniker": "Models\\LoginResponse.cs",
+              "ToolTip": "D:\\2025\\r1\\be2025\\OnlineShop.Web\\Models\\LoginResponse.cs",
+              "RelativeToolTip": "Models\\LoginResponse.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-15T13:07:26.514Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "LoginRequest.cs",
+              "DocumentMoniker": "D:\\2025\\r1\\be2025\\OnlineShop.Web\\Models\\LoginRequest.cs",
+              "RelativeDocumentMoniker": "Models\\LoginRequest.cs",
+              "ToolTip": "D:\\2025\\r1\\be2025\\OnlineShop.Web\\Models\\LoginRequest.cs",
+              "RelativeToolTip": "Models\\LoginRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-15T13:07:26.517Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\2025\\r1\\be2025\\OnlineShop.Web\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "D:\\2025\\r1\\be2025\\OnlineShop.Web\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAG0AAAAAAAAAAADgvx4AAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-15T13:07:26.518Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "AccountController.cs",
+              "DocumentMoniker": "D:\\2025\\r1\\be2025\\OnlineShop.Web\\Controllers\\AccountController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AccountController.cs",
+              "ToolTip": "D:\\2025\\r1\\be2025\\OnlineShop.Web\\Controllers\\AccountController.cs",
+              "RelativeToolTip": "Controllers\\AccountController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAADsAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-15T13:07:26.522Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

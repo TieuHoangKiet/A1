@@ -1,0 +1,140 @@
+﻿@* ✅ Bước 1: Đổi Model sang ViewModel mới *@
+@model OnlineShop.Web.Models.ProductIndexViewModel
+@{
+    ViewData["Title"] = "Sản Phẩm";
+    var cultureInfo = new System.Globalization.CultureInfo("vi-VN");
+}
+
+<div class="container product-page-container mt-4">
+    <div class="row">
+
+        @* ============================================= *@
+        @* PHẦN LỌC SẢN PHẨM (SIDEBAR) *@
+        @* ============================================= *@
+        <div class="col-lg-3">
+            <div class="border p-3">
+
+                @* ✅ Bước 2: Hiển thị bộ lọc CATEGORY (Lấy từ API) *@
+                <h4 class="mb-3">Danh mục</h4>
+                <div class="list-group list-group-flush">
+                    <a asp-action="Index"
+                       asp-route-categoryId=""
+                       asp-route-sort="@Model.SortByPrice"
+                       class="list-group-item list-group-item-action @(Model.CurrentCategoryId == null ? "active" : "")">
+                        Tất cả danh mục
+                    </a>
+                    @foreach (var category in Model.Categories)
+                    {
+                        <a asp-action="Index"
+                           asp-route-categoryId="@category.Id"
+                           asp-route-sort="@Model.SortByPrice"
+                           class="list-group-item list-group-item-action @(Model.CurrentCategoryId == category.Id ? "active" : "")">
+                            @category.Name
+                        </a>
+                    }
+                </div>
+
+                <hr />
+
+                @* ✅ Bước 3: Hiển thị bộ lọc GIÁ *@
+                <h4 class="mb-3 mt-4">Sắp xếp theo giá</h4>
+                <div class="list-group list-group-flush">
+                    <a asp-action="Index"
+                       asp-route-categoryId="@Model.CurrentCategoryId"
+                       asp-route-sort="price_asc"
+                       class="list-group-item list-group-item-action @(Model.SortByPrice == "price_asc" ? "active" : "")">
+                        Giá tăng dần
+                    </a>
+                    <a asp-action="Index"
+                       asp-route-categoryId="@Model.CurrentCategoryId"
+                       asp-route-sort="price_desc"
+                       class="list-group-item list-group-item-action @(Model.SortByPrice == "price_desc" ? "active" : "")">
+                        Giá giảm dần
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        @* ============================================= *@
+        @* PHẦN HIỂN THỊ LƯỚI SẢN PHẨM *@
+        @* ============================================= *@
+        <div class="col-lg-9">
+            <h3>Tất cả sản phẩm</h3>
+
+            <div class="row">
+                @* ✅ Bước 4: Lặp qua Model.Products (thay vì Model) *@
+                @if (Model.Products != null && Model.Products.Any())
+                {
+                    @foreach (var product in Model.Products)
+                    {
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100 shadow-sm">
+
+                                @* ✅ Giữ nguyên: Bấm vào ảnh/tên -> Details *@
+                                <a asp-controller="Products" asp-action="Details" asp-route-id="@product.Id">
+                                    <img src="@(product.ThumbnailUrl ?? product.ImageUrl ?? "https://via.placeholder.com/300x200?text=No+Image")"
+                                         class="card-img-top"
+                                         alt="@product.Name"
+                                         style="height: 200px; object-fit: cover;">
+                                </a>
+
+                                <div class="card-body d-flex flex-column">
+
+                                    @* ✅ Giữ nguyên: Bấm vào ảnh/tên -> Details *@
+                                    <a asp-controller="Products" asp-action="Details" asp-route-id="@product.Id" class="text-decoration-none text-dark">
+                                        <h5 class="card-title">@product.Name</h5>
+                                    </a>
+
+                                    <p class="card-text flex-grow-1">
+                                        @(product.Description?.Length > 100 ? product.Description.Substring(0, 100) + "..." : product.Description)
+                                    </p>
+
+                                    <h5 class="card-price text-danger mb-3">@product.Price.ToString("C0", cultureInfo)</h5>
+
+                                    @* ✅ Bước 5: Cập nhật các nút bấm (dùng Form) *@
+                                    <div class="mt-auto d-flex justify-content-between">
+
+                                        @* Form cho nút "Thêm vào giỏ" *@
+                                        <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                                            <input type="hidden" name="id" value="@product.Id" />
+                                            <input type="hidden" name="name" value="@product.Name" />
+                                            <input type="hidden" name="price" value="@product.Price" />
+                                            <input type="hidden" name="thumbnailUrl" value="@(product.ThumbnailUrl ?? product.ImageUrl)" />
+                                            <button type="submit" class="btn btn-outline-primary btn-sm">
+                                                Thêm vào giỏ
+                                            </button>
+                                        </form>
+
+                                        @* Form cho nút "Mua ngay" *@
+                                        <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                                            <input type="hidden" name="id" value="@product.Id" />
+                                            <input type="hidden" name="name" value="@product.Name" />
+                                            <input type="hidden" name="price" value="@product.Price" />
+                                            <input type="hidden" name="thumbnailUrl" value="@(product.ThumbnailUrl ?? product.ImageUrl)" />
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                Mua ngay
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-12">
+                        <p class="text-center">Không tìm thấy sản phẩm nào phù hợp.</p>
+                    </div>
+                }
+            </div>
+
+            @* Vị trí cho phân trang (Pagination) *@
+            <div class="pagination-placeholder mt-4 d-flex justify-content-center">
+                <p>(Vị trí cho Component Phân trang)</p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,111 @@
+﻿using OnlineShop.Web.Services;
+using OnlineShop.Api.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Net.Http.Headers;
+
+namespace OnlineShop.Web
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
+
+            // 1. MVC
+            builder.Services.AddControllersWithViews();
+
+            // 2. Session
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(60);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+                options.Cookie.SameSite = SameSiteMode.Lax;
+            });
+
+            builder.Services.AddHttpContextAccessor();
+
+            // ============================
+            // ⭐ 3. Thêm CORS cho Swagger (5081)
+            // ============================
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSwagger", policy =>
+                {
+                    policy.WithOrigins("http://localhost:5081")   // API Swagger
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
+            });
+
+            // 4. BaseUrl API
+            var baseUrl = builder.Configuration["ApiSettings:BaseUrl"]
+                       ?? "http://localhost:5081/api/";
+
+            // 5. HttpClient chung
+            builder.Services.AddHttpClient("api", client =>
+            {
+                client.BaseAddress = new Uri(baseUrl);
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+            });
+
+            // 6. ApiService
+            builder.Services.AddScoped<ApiService>();
+
+            // 7. ProductService DI
+            builder.Services.AddScoped<ProductService>();
+
+            // 8. Cookie Authentication
+            builder.Services.AddAuthentication("Cookies")
+                .AddCookie("Cookies", options =>
+                {
+                    options.LoginPath = "/Account/Login";
+                    options.LogoutPath = "/Account/Logout";
+                });
+
+            // 9. DbContext
+            builder.Services.AddDbContext<ShopDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            var app = builder.Build();
+
+            // 10. Error handling
+            if (!app.Environment.IsDevelopment())
+            {
+                app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
+            }
+
+            app.UseStaticFiles();
+
+            app.UseRouting();
+
+            // ⭐ ENABLE CORS CHO SWAGGER
+            app.UseCors("AllowSwagger");
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseSession();
+
+            // 11. ROUTES
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            app.MapControllerRoute(
+                name: "account",
+                pattern: "Account/{action=Login}/{id?}",
+                defaults: new { controller = "Account" });
+
+            app.MapControllerRoute(
+                name: "admin",
+                pattern: "Admin/{controller=AdminHome}/{action=Index}/{id?}");
+
+            app.Run();
+        }
+    }
+}

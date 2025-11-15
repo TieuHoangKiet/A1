@@ -1,0 +1,20 @@
+﻿using OnlineShop.Web.Models;
+
+namespace OnlineShop.Web.Services
+{
+    public class PortService
+    {
+        private readonly ApiService _api;
+
+        public PortService(ApiService api)
+        {
+            _api = api;
+        }
+
+        public Task<List<PortViewModel>> GetAllAsync()
+            => _api.GetAsync<List<PortViewModel>>("ports");
+
+        public Task<PortViewModel?> GetAsync(int id)
+            => _api.GetAsync<PortViewModel>($"ports/{id}");
+    }
+}

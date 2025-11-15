@@ -1,0 +1,27 @@
+﻿@model OnlineShop.Web.Models.Category
+
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Thêm danh mục";
+}
+
+<div class="container mt-4">
+    <h3>Thêm danh mục</h3>
+
+    <form asp-action="Create" asp-controller="AdminCategory" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="form-group">
+            <label asp-for="Name">Tên danh mục</label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Lưu</button>
+        <a asp-action="Index" class="btn btn-secondary mt-3">Quay lại</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

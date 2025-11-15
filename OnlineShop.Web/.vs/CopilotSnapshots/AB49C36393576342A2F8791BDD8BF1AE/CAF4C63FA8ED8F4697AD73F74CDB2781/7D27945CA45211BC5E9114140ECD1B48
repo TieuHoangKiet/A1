@@ -1,0 +1,23 @@
+﻿@model List<OnlineShop.Web.Models.PortViewModel>
+@{
+    ViewData["Title"] = "Blog";
+}
+
+<div class="container mt-4">
+    <h2>Blog</h2>
+    <div class="row">
+        @foreach (var p in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="@(p.ImageUrl ?? "/images/blog-placeholder.png")" class="card-img-top" style="height:200px;object-fit:cover" />
+                    <div class="card-body">
+                        <h5 class="card-title">@p.Title</h5>
+                        <p class="card-text">@(p.Summary ?? p.Content?.Substring(0, Math.Min(120, p.Content?.Length ?? 0)) + "...")</p>
+                        <a asp-controller="Blog" asp-action="Details" asp-route-id="@p.Id" class="btn btn-primary">Xem chi ti?t</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

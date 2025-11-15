@@ -1,0 +1,146 @@
+﻿using Microsoft.EntityFrameworkCore;
+using OnlineShop.Api.Models;
+
+namespace OnlineShop.Api.Data
+{
+    public partial class ShopDbContext : DbContext
+    {
+        public ShopDbContext()
+        {
+        }
+
+        public ShopDbContext(DbContextOptions<ShopDbContext> options)
+            : base(options)
+        {
+        }
+
+        // 🔹 Các bảng (DbSet)
+        public DbSet<AccountUser> Account_Users { get; set; }
+        public DbSet<RoleUser> Roles_Users { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Port> Ports { get; set; }
+
+
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code.
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Server=GIN;Database=OnlineShopDB;Trusted_Connection=True;TrustServerCertificate=True;");
+            }
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // --------------------- CATEGORY ---------------------
+            modelBuilder.Entity<Category>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.Slug).IsUnique();
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
+                entity.Property(e => e.IsActive).HasDefaultValue(true);
+                entity.Property(e => e.Name).HasMaxLength(100);
+                entity.Property(e => e.Slug).HasMaxLength(120);
+            });
+
+            // --------------------- PORT (BLOG) ---------------------
+            modelBuilder.Entity<Port>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.ToTable("post"); // map to existing dbo.post table
+                entity.Property(e => e.Title).HasMaxLength(250).IsRequired();
+                entity.Property(e => e.Slug).HasMaxLength(300);
+                entity.Property(e => e.Summary).HasMaxLength(1000);
+                entity.Property(e => e.ImageUrl).HasMaxLength(300);
+                entity.Property(e => e.IsActive).HasDefaultValue(true);
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
+            });
+
+            // --------------------- PRODUCT ---------------------
+            modelBuilder.Entity<Product>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.Slug).IsUnique();
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
+                entity.Property(e => e.ImageUrl).HasMaxLength(300);
+                entity.Property(e => e.IsActive).HasDefaultValue(true);
+                entity.Property(e => e.Name).HasMaxLength(200);
+                entity.Property(e => e.Price).HasColumnType("decimal(18, 2)");
+                entity.Property(e => e.Slug).HasMaxLength(220);
+
+                entity.HasOne(d => d.Category)
+                    .WithMany(p => p.Products)
+                    .HasForeignKey(d => d.CategoryId)
+                    .HasConstraintName("FK_Product_Category");
+            });
+
+            // --------------------- ORDER ---------------------
+            modelBuilder.Entity<Order>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.OrderDate).HasDefaultValueSql("(sysutcdatetime())");
+                entity.Property(e => e.ShipAddress).HasMaxLength(300);
+                entity.Property(e => e.ShipName).HasMaxLength(120);
+                entity.Property(e => e.ShipPhone).HasMaxLength(30);
+                entity.Property(e => e.Status).HasMaxLength(30).HasDefaultValue("Pending");
+                entity.Property(e => e.Total).HasColumnType("decimal(18, 2)");
+                entity.Property(e => e.UserEmail).HasMaxLength(200);
+            });
+
+            // --------------------- ORDER ITEM ---------------------
+            modelBuilder.Entity<OrderItem>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.LineTotal)
+                    .HasComputedColumnSql("([UnitPrice]*[Quantity])", true)
+                    .HasColumnType("decimal(29, 2)");
+                entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 2)");
+
+                entity.HasOne(d => d.Order)
+                    .WithMany(p => p.OrderItems)
+                    .HasForeignKey(d => d.OrderId)
+                    .HasConstraintName("FK_OrderItem_Order");
+
+                entity.HasOne(d => d.Product)
+                    .WithMany(p => p.OrderItems)
+                    .HasForeignKey(d => d.ProductId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_OrderItem_Product");
+            });
+
+            // --------------------- ACCOUNT USER ---------------------
+            modelBuilder.Entity<AccountUser>(entity =>
+            {
+                entity.HasKey(e => e.UserId);
+                entity.Property(e => e.UserName).HasMaxLength(100).IsRequired();
+                entity.Property(e => e.PasswordHash).HasMaxLength(255).IsRequired();
+                entity.Property(e => e.FullName).HasMaxLength(100);
+                entity.Property(e => e.Email).HasMaxLength(100);
+                entity.Property(e => e.Phone).HasMaxLength(20);
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.Accounts)
+                    .HasForeignKey(d => d.RoleId)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .HasConstraintName("FK_AccountUser_RoleUser");
+            });
+
+            // --------------------- ROLE USER ---------------------
+            modelBuilder.Entity<RoleUser>(entity =>
+            {
+                entity.HasKey(e => e.RoleId);
+                entity.Property(e => e.RoleName).HasMaxLength(50).IsRequired();
+                entity.Property(e => e.Description).HasMaxLength(200);
+            });
+
+            OnModelCreatingPartial(modelBuilder);
+        }
+
+        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+    }
+}

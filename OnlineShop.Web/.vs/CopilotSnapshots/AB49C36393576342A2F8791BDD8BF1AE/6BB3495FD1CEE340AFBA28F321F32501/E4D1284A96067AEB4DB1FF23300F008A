@@ -1,0 +1,222 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using OnlineShop.Api.Data;
+using OnlineShop.Api.Models;
+using System.Data.Common;
+
+namespace OnlineShop.Api.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class PortsController : ControllerBase
+    {
+        private readonly ShopDbContext _context;
+        private readonly ILogger<PortsController> _logger;
+
+        public PortsController(ShopDbContext context, ILogger<PortsController> logger)
+        {
+            _context = context;
+            _logger = logger;
+        }
+
+        // GET: api/Ports
+        [HttpGet]
+        public IActionResult GetPorts()
+        {
+            try
+            {
+                // Try EF query first (no strict IsActive filter to avoid missing rows)
+                try
+                {
+                    var efList = _context.Set<Port>()
+                        .OrderByDescending(p => p.CreatedAt)
+                        .Take(50)
+                        .ToList();
+
+                    if (efList != null && efList.Count > 0)
+                    {
+                        _logger.LogInformation("Loaded {Count} posts via EF.", efList.Count);
+                        return Ok(efList);
+                    }
+                }
+                catch (Exception efEx)
+                {
+                    _logger.LogWarning(efEx, "EF query for ports failed, will fallback to raw SQL reader.");
+                }
+
+                // Fallback: use raw ADO.NET to read rows from common table names
+                var candidates = new[] { "dbo.post", "post", "dbo.posts", "posts" };
+                foreach (var tbl in candidates)
+                {
+                    try
+                    {
+                        var conn = _context.Database.GetDbConnection();
+                        if (conn.State != System.Data.ConnectionState.Open)
+                            conn.Open();
+
+                        using var cmd = conn.CreateCommand();
+                        cmd.CommandText = $"SELECT TOP (50) * FROM {tbl}";
+
+                        using var reader = cmd.ExecuteReader();
+                        var list = new List<Port>();
+
+                        while (reader.Read())
+                        {
+                            var p = new Port();
+                            p.Id = ReadInt(reader, "Id", "PostId", "ID");
+                            p.Title = ReadString(reader, "Title", "PostTitle", "Name");
+                            p.Slug = ReadString(reader, "Slug", "UrlSlug");
+                            p.Summary = ReadString(reader, "Summary", "Excerpt");
+                            p.Content = ReadString(reader, "Content", "Body", "Description");
+                            p.ImageUrl = ReadString(reader, "ImageUrl", "Image", "Thumbnail");
+                            p.Author = ReadString(reader, "Author", "CreatedBy");
+                            p.IsActive = ReadBoolNullable(reader, "IsActive", "Active");
+                            p.CreatedAt = ReadDateTimeFallback(reader, "CreatedAt", "CreatedOn", "DateCreated");
+
+                            list.Add(p);
+                        }
+
+                        if (list.Count > 0)
+                        {
+                            _logger.LogInformation("Loaded {Count} posts via raw SQL from {Table}", list.Count, tbl);
+                            return Ok(list);
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Attempt to read from table {Table} failed", tbl);
+                        // try next candidate
+                    }
+                }
+
+                // No data found
+                _logger.LogInformation("No posts found in any candidate tables.");
+                return Ok(new List<Port>());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while fetching ports");
+                return Problem(detail: ex.Message, statusCode: 500, title: "Internal Server Error");
+            }
+
+            // Local helper functions
+            static int ReadInt(DbDataReader reader, params string[] names)
+            {
+                foreach (var n in names)
+                {
+                    if (HasColumn(reader, n) && !reader.IsDBNull(reader.GetOrdinal(n)))
+                    {
+                        var val = reader.GetValue(reader.GetOrdinal(n));
+                        if (val is int i) return i;
+                        if (int.TryParse(val?.ToString(), out var v)) return v;
+                    }
+                }
+                return 0;
+            }
+
+            static string? ReadString(DbDataReader reader, params string[] names)
+            {
+                foreach (var n in names)
+                {
+                    if (HasColumn(reader, n) && !reader.IsDBNull(reader.GetOrdinal(n)))
+                        return reader.GetString(reader.GetOrdinal(n));
+                }
+                return null;
+            }
+
+            static bool? ReadBoolNullable(DbDataReader reader, params string[] names)
+            {
+                foreach (var n in names)
+                {
+                    if (HasColumn(reader, n) && !reader.IsDBNull(reader.GetOrdinal(n)))
+                    {
+                        var val = reader.GetValue(reader.GetOrdinal(n));
+                        if (val is bool b) return b;
+                        if (int.TryParse(val?.ToString(), out var iv)) return iv != 0;
+                        if (bool.TryParse(val?.ToString(), out var bv)) return bv;
+                    }
+                }
+                return null;
+            }
+
+            static DateTime ReadDateTimeFallback(DbDataReader reader, params string[] names)
+            {
+                foreach (var n in names)
+                {
+                    if (HasColumn(reader, n) && !reader.IsDBNull(reader.GetOrdinal(n)))
+                    {
+                        var val = reader.GetValue(reader.GetOrdinal(n));
+                        if (val is DateTime dt) return dt;
+                        if (DateTime.TryParse(val?.ToString(), out var parsed)) return parsed;
+                    }
+                }
+                return DateTime.MinValue;
+            }
+
+            static bool HasColumn(DbDataReader reader, string columnName)
+            {
+                try
+                {
+                    return reader.GetOrdinal(columnName) >= 0;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+
+        // GET: api/Ports/5
+        [HttpGet("{id}")]
+        public IActionResult GetPort(int id)
+        {
+            try
+            {
+                var port = _context.Set<Port>().Find(id);
+                if (port != null) return Ok(port);
+
+                // fallback to simple raw query by id (try common id column names)
+                var conn = _context.Database.GetDbConnection();
+                if (conn.State != System.Data.ConnectionState.Open) conn.Open();
+
+                using var cmd = conn.CreateCommand();
+                cmd.CommandText = "SELECT TOP (1) * FROM dbo.post WHERE Id = @id OR PostId = @id OR ID = @id";
+                var param = cmd.CreateParameter();
+                param.ParameterName = "@id";
+                param.Value = id;
+                cmd.Parameters.Add(param);
+
+                using var reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    var p = new Port();
+                    p.Id = ReadInt(reader, "Id", "PostId", "ID");
+                    p.Title = ReadString(reader, "Title", "PostTitle", "Name");
+                    p.Slug = ReadString(reader, "Slug", "UrlSlug");
+                    p.Summary = ReadString(reader, "Summary", "Excerpt");
+                    p.Content = ReadString(reader, "Content", "Body", "Description");
+                    p.ImageUrl = ReadString(reader, "ImageUrl", "Image", "Thumbnail");
+                    p.Author = ReadString(reader, "Author", "CreatedBy");
+                    p.IsActive = ReadBoolNullable(reader, "IsActive", "Active");
+                    p.CreatedAt = ReadDateTimeFallback(reader, "CreatedAt", "CreatedOn", "DateCreated");
+
+                    return Ok(p);
+                }
+
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while fetching port {Id}", id);
+                return Problem(detail: ex.Message, statusCode: 500, title: "Internal Server Error");
+            }
+
+            // Local helper re-declared for compilation
+            static int ReadInt(DbDataReader reader, params string[] names) => throw new NotImplementedException();
+            static string? ReadString(DbDataReader reader, params string[] names) => throw new NotImplementedException();
+            static bool? ReadBoolNullable(DbDataReader reader, params string[] names) => throw new NotImplementedException();
+            static DateTime ReadDateTimeFallback(DbDataReader reader, params string[] names) => throw new NotImplementedException();
+        }
+    }
+}

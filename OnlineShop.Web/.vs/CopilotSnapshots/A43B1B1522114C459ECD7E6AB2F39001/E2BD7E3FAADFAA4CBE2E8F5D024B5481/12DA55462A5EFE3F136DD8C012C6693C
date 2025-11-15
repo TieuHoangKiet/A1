@@ -1,0 +1,71 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using OnlineShop.Web.Models;
+using OnlineShop.Web.Services;
+
+namespace OnlineShop.Web.Pages
+{
+    public class CartModel : PageModel
+    {
+        private readonly CartService _cartService;
+        private readonly ProductService _productService;
+
+        public Cart Cart { get; set; } = new Cart();
+
+        [BindProperty]
+        public int[] ProductIds { get; set; } = Array.Empty<int>();
+        [BindProperty]
+        public int[] Quantities { get; set; } = Array.Empty<int>();
+
+        public CartModel(CartService cartService, ProductService productService)
+        {
+            _cartService = cartService;
+            _productService = productService;
+        }
+
+        public void OnGet()
+        {
+            Cart = _cartService.GetCart();
+        }
+
+        public IActionResult OnPost()
+        {
+            if (Request.Form.ContainsKey("remove"))
+            {
+                int id = int.Parse(Request.Form["remove"]);
+                _cartService.RemoveFromCart(id);
+            }
+            else if (Request.Form.ContainsKey("update"))
+            {
+                for (int i = 0; i < ProductIds.Length; i++)
+                {
+                    _cartService.UpdateQuantity(ProductIds[i], Quantities[i]);
+                }
+            }
+            else if (Request.Form.ContainsKey("clear"))
+            {
+                _cartService.ClearCart();
+            }
+            return RedirectToPage();
+        }
+
+        // Thêm sản phẩm vào giỏ hàng
+        public async Task<IActionResult> OnPostAddAsync(int productId, int quantity = 1)
+        {
+            var product = await _productService.GetByIdAsync(productId);
+            if (product != null)
+            {
+                var item = new CartItem
+                {
+                    ProductId = product.Id,
+                    ProductName = product.Name,
+                    ImageUrl = product.ImageUrl,
+                    Price = product.Price,
+                    Quantity = quantity
+                };
+                _cartService.AddToCart(item);
+            }
+            return RedirectToPage();
+        }
+    }
+}

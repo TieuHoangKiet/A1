@@ -1,0 +1,50 @@
+﻿@model IEnumerable<OnlineShop.Web.Models.Category>
+
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Quản lý danh mục";
+}
+
+<div class="container mt-4">
+    <h2>Quản lý danh mục</h2>
+
+    <a class="btn btn-primary mb-3" asp-controller="AdminCategory" asp-action="Create">+ Thêm danh mục</a>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên danh mục</th>
+                <th>Slug</th>
+                <th>Trạng thái</th>
+                <th>Ngày tạo</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Name</td>
+                    <td>@item.Slug</td>
+                    <td>@(item.IsActive ? "Hoạt động" : "Ẩn")</td>
+
+
+                    <td>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>
+                        <a class="btn btn-warning btn-sm" asp-action="Edit" asp-route-id="@item.Id">Sửa</a>
+
+                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Xóa danh mục này?');">
+                                Xóa
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

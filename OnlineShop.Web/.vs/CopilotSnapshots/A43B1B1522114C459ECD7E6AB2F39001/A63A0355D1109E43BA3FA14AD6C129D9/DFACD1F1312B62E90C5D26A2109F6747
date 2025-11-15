@@ -1,0 +1,125 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using OnlineShop.Web.Models;
+using OnlineShop.Web.Services;
+
+namespace OnlineShop.Web.Pages
+{
+    public class CartModel : PageModel
+    {
+        private readonly CartService _cartService;
+        private readonly ProductService _productService;
+
+        public Cart Cart { get; set; } = new Cart();
+
+        [BindProperty]
+        public int[] ProductIds { get; set; } = Array.Empty<int>();
+        [BindProperty]
+        public int[] Quantities { get; set; } = Array.Empty<int>();
+
+        public CartModel(CartService cartService, ProductService productService)
+        {
+            _cartService = cartService;
+            _productService = productService;
+        }
+
+        public void OnGet()
+        {
+            Cart = _cartService.GetCart();
+        }
+
+        // Thêm sản phẩm vào giỏ hàng: POST /Cart?handler=Add
+        public async Task<IActionResult> OnPostAddAsync(int productId, int quantity = 1)
+        {
+            if (quantity <= 0) quantity = 1;
+
+            var product = await _productService.GetProductAsync(productId);
+            if (product == null)
+            {
+                TempData["CartMessage"] = "Sản phẩm không tồn tại.";
+                return RedirectToPage();
+            }
+
+            // Kiểm tra tồn kho nếu có
+            if (product.Stock <= 0)
+            {
+                TempData["CartMessage"] = "Sản phẩm tạm hết hàng.";
+                return RedirectToPage();
+            }
+
+            var cart = _cartService.GetCart();
+            var existing = cart.Items.FirstOrDefault(x => x.ProductId == product.Id);
+            if (existing != null)
+            {
+                var desired = existing.Quantity + quantity;
+                if (product.Stock > 0 && desired > product.Stock)
+                    existing.Quantity = product.Stock; // giới hạn theo stock
+                else
+                    existing.Quantity = desired;
+            }
+            else
+            {
+                var item = new CartItem
+                {
+                    ProductId = product.Id,
+                    Name = product.Name,
+                    Price = product.Price,
+                    Quantity = Math.Min(quantity, Math.Max(1, product.Stock)),
+                    ThumbnailUrl = product.ThumbnailUrl ?? product.ImageUrl
+                };
+                cart.Items.Add(item);
+            }
+
+            _cartService.SaveCart(cart);
+            TempData["CartMessage"] = "Đã thêm vào giỏ hàng.";
+            return RedirectToPage();
+        }
+
+        // Cập nhật nhiều mục: POST /Cart?handler=Update
+        public IActionResult OnPostUpdate()
+        {
+            // ProductIds và Quantities bind từ form
+            if (ProductIds.Length != Quantities.Length)
+            {
+                TempData["CartMessage"] = "Dữ liệu cập nhật không hợp lệ.";
+                return RedirectToPage();
+            }
+
+            var cart = _cartService.GetCart();
+            for (int i = 0; i < ProductIds.Length; i++)
+            {
+                var id = ProductIds[i];
+                var qty = Quantities[i];
+                if (qty <= 0)
+                {
+                    cart.Items.RemoveAll(x => x.ProductId == id);
+                    continue;
+                }
+
+                var item = cart.Items.FirstOrDefault(x => x.ProductId == id);
+                if (item != null)
+                    item.Quantity = qty;
+            }
+
+            _cartService.SaveCart(cart);
+            TempData["CartMessage"] = "Cập nhật giỏ hàng thành công.";
+            return RedirectToPage();
+        }
+
+        // Xóa 1 sản phẩm: POST /Cart?handler=Remove
+        public IActionResult OnPostRemove(int productId)
+        {
+            _cartService.RemoveFromCart(productId);
+            TempData["CartMessage"] = "Đã xóa sản phẩm khỏi giỏ hàng.";
+            return RedirectToPage();
+        }
+
+        // Xóa toàn bộ giỏ hàng: POST /Cart?handler=Clear
+        public IActionResult OnPostClear()
+        {
+            _cartService.ClearCart();
+            TempData["CartMessage"] = "Đã xóa toàn bộ giỏ hàng.";
+            return RedirectToPage();
+        }
+    }
+}

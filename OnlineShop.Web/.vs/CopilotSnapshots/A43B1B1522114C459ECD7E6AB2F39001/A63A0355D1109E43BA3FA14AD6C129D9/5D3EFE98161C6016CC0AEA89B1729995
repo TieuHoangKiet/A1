@@ -1,0 +1,78 @@
+﻿@page
+@model OnlineShop.Web.Pages.CartModel
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+<h2>Giỏ hàng</h2>
+
+@if (TempData["CartMessage"] != null)
+{
+    <div class="alert alert-info">@TempData["CartMessage"]</div>
+}
+
+@if (Model.Cart.Items.Count == 0)
+{
+    <div>Giỏ hàng của bạn đang trống.</div>
+}
+else
+{
+    <form method="post" asp-page-handler="Update">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Sản phẩm</th>
+                    <th>Hình ảnh</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Tổng</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Cart.Items.Count; i++)
+                {
+                    var item = Model.Cart.Items[i];
+                    <tr>
+                        <td style="vertical-align: middle;">@item.Name</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.ThumbnailUrl))
+                            {
+                                <img src="@item.ThumbnailUrl" width="80" />
+                            }
+                        </td>
+                        <td style="vertical-align: middle;">@item.Price.ToString("N0")</td>
+                        <td>
+                            <input type="hidden" name="ProductIds" value="@item.ProductId" />
+                            <input type="number" name="Quantities" value="@item.Quantity" min="0" class="form-control" style="width:100px" />
+                        </td>
+                        <td style="vertical-align: middle;">@item.Total.ToString("N0")</td>
+                        <td>
+                            <form method="post" asp-page-handler="Remove" style="display:inline">
+                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <button type="submit" class="btn btn-primary">Cập nhật giỏ hàng</button>
+                <form method="post" asp-page-handler="Clear" style="display:inline">
+                    <button type="submit" class="btn btn-warning">Xóa tất cả</button>
+                </form>
+            </div>
+            <div>
+                <strong>Tổng cộng: @Model.Cart.GrandTotal.ToString("N0")</strong>
+                <a href="/Checkout" class="btn btn-success ms-3">Thanh toán</a>
+            </div>
+        </div>
+    </form>
+}
+
+<hr />
+
+<p>Tiếp tục mua sắm: <a href="/Products">Danh sách sản phẩm</a></p>

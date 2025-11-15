@@ -1,0 +1,36 @@
+﻿@model OnlineShop.Web.Controllers.DashboardStats
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewData["Title"] = "Thống kê doanh thu";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-primary">📊 Thống kê doanh thu</h2>
+
+    <div class="row text-center">
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3">
+                <h5 class="text-secondary">Tổng đơn hàng</h5>
+                <h3 class="text-primary">@Model.TotalOrders</h3>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3">
+                <h5 class="text-secondary">Tổng doanh thu</h5>
+                <h3 class="text-success">@Model.TotalRevenue.ToString("N0") đ</h3>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3">
+                <h5 class="text-secondary">Sản phẩm đã bán</h5>
+                <h3 class="text-danger">@Model.TotalProductsSold</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a asp-controller="AdminOrder" asp-action="Index" class="btn btn-primary">Xem danh sách đơn hàng</a>
+    </div>
+</div>

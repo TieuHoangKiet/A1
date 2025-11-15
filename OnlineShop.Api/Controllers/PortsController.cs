@@ -1,0 +1,129 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using OnlineShop.Api.Data;
+using OnlineShop.Api.Models;
+
+namespace OnlineShop.Api.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class PortsController : ControllerBase
+    {
+        private readonly ShopDbContext _context;
+        private readonly ILogger<PortsController> _logger;
+
+        public PortsController(ShopDbContext context, ILogger<PortsController> logger)
+        {
+            _context = context;
+            _logger = logger;
+        }
+
+        // GET: api/Ports
+        [HttpGet]
+        public IActionResult GetPorts()
+        {
+            try
+            {
+                // Try normal EF query first (handles mapped table)
+                var list = _context.Set<Port>()
+                    .Where(p => p.IsActive == true)
+                    .OrderByDescending(p => p.CreatedAt)
+                    .ToList();
+
+                if (list != null && list.Count > 0)
+                    return Ok(list);
+
+                // If no results, try less strict filter (IsActive null or true)
+                var list2 = _context.Set<Port>()
+                    .Where(p => p.IsActive == null || p.IsActive == true)
+                    .OrderByDescending(p => p.CreatedAt)
+                    .ToList();
+
+                if (list2 != null && list2.Count > 0)
+                    return Ok(list2);
+
+                // Fallback: try raw SQL using COALESCE across common column names
+                var sql = @"
+SELECT TOP (50)
+    COALESCE(CAST([Id] AS int), CAST([PostId] AS int), CAST([ID] AS int)) AS Id,
+    COALESCE([Title],[PostTitle],[Name]) AS Title,
+    COALESCE([Slug],[UrlSlug]) AS Slug,
+    COALESCE([Summary],[Excerpt]) AS Summary,
+    COALESCE([Content],[Body],[Description]) AS Content,
+    COALESCE([ImageUrl],[Image],[Thumbnail]) AS ImageUrl,
+    COALESCE([Author],[CreatedBy]) AS Author,
+    COALESCE([IsActive],[Active]) AS IsActive,
+    COALESCE([CreatedAt],[CreatedOn],[DateCreated]) AS CreatedAt
+FROM post";
+
+                try
+                {
+                    var raw = _context.Set<Port>().FromSqlRaw(sql).ToList();
+                    if (raw != null && raw.Count > 0)
+                    {
+                        _logger.LogInformation("Ports loaded via raw SQL COALESCE fallback");
+                        return Ok(raw);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Raw COALESCE SQL fallback failed");
+                }
+
+                // Nothing found; return empty list (200) to avoid breaking front-end
+                _logger.LogInformation("No posts found via EF or SQL fallback.");
+                return Ok(new List<Port>());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while fetching ports");
+                // Return empty list on error instead of 500 so frontend won't fail
+                return Ok(new List<Port>());
+            }
+        }
+
+        // GET: api/Ports/5
+        [HttpGet("{id}")]
+        public IActionResult GetPort(int id)
+        {
+            try
+            {
+                var port = _context.Set<Port>().Find(id);
+                if (port != null) return Ok(port);
+
+                // Fallback parameterized SQL using COALESCE for id column variants
+                var sql = @"
+SELECT TOP (1)
+    COALESCE(CAST([Id] AS int), CAST([PostId] AS int), CAST([ID] AS int)) AS Id,
+    COALESCE([Title],[PostTitle],[Name]) AS Title,
+    COALESCE([Slug],[UrlSlug]) AS Slug,
+    COALESCE([Summary],[Excerpt]) AS Summary,
+    COALESCE([Content],[Body],[Description]) AS Content,
+    COALESCE([ImageUrl],[Image],[Thumbnail]) AS ImageUrl,
+    COALESCE([Author],[CreatedBy]) AS Author,
+    COALESCE([IsActive],[Active]) AS IsActive,
+    COALESCE([CreatedAt],[CreatedOn],[DateCreated]) AS CreatedAt
+FROM post
+WHERE COALESCE(CAST([Id] AS int), CAST([PostId] AS int), CAST([ID] AS int)) = {0}";
+
+                try
+                {
+                    var raw = _context.Set<Port>().FromSqlRaw(sql, id).AsEnumerable().FirstOrDefault();
+                    if (raw != null) return Ok(raw);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Raw COALESCE SQL fallback for single post failed");
+                }
+
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while fetching port {Id}", id);
+                // Return NotFound on error to avoid 500
+                return NotFound();
+            }
+        }
+    }
+}

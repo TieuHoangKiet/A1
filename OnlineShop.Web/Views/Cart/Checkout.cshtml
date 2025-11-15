@@ -1,0 +1,55 @@
+﻿@model OnlineShop.Web.Models.Order
+
+<h2>Thanh toán</h2>
+@if (ViewBag.ApiError != null)
+{
+    <div class="alert alert-danger">@ViewBag.ApiError</div>
+}
+
+<form asp-action="Checkout" method="post">
+    <div class="form-group">
+        <label asp-for="ShipName">Họ tên</label>
+        <input asp-for="ShipName" class="form-control" />
+        <span asp-validation-for="ShipName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ShipPhone">Số điện thoại</label>
+        <input asp-for="ShipPhone" class="form-control" />
+        <span asp-validation-for="ShipPhone" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ShipAddress">Địa chỉ</label>
+        <textarea asp-for="ShipAddress" class="form-control"></textarea>
+        <span asp-validation-for="ShipAddress" class="text-danger"></span>
+    </div>
+
+    <table class="table table-bordered text-center mt-4">
+        <thead>
+            <tr>
+                <th>Tên sản phẩm</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <th>Tổng</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.OrderItems)
+            {
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>@item.Price.ToString("N0") đ</td>
+                    <td>@item.Quantity</td>
+                    <td>@(item.Price * item.Quantity).ToString("N0") đ</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <p><strong>Tổng cộng:</strong> @Model.Total.ToString("N0") đ</p>
+
+    <button type="submit" class="btn btn-success">Xác nhận thanh toán</button>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</form>
+@Html.AntiForgeryToken()

@@ -1,0 +1,97 @@
+﻿@model List<OnlineShop.Web.Models.PortViewModel>
+@{
+    ViewData["Title"] = "Blog";
+}
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-lg-8">
+                <h1 class="display-5 fw-bold">Bài viết nổi bật</h1>
+                <p class="text-muted">Cập nhật tin tức, mẹo vặt và hướng dẫn mua sắm.</p>
+            </div>
+            <div class="col-lg-4 d-flex align-items-center justify-content-end">
+                <form class="d-flex w-100" method="get" action="/Blog">
+                    <input name="q" class="form-control me-2" placeholder="Tìm kiếm bài viết..." />
+                    <button class="btn btn-dark">Tìm</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="row gy-4">
+            <div class="col-lg-8">
+                @if (Model != null && Model.Any())
+                {
+                    var featured = Model.First();
+                    <div class="card mb-4 shadow-sm border-0">
+                        <div style="height:420px;overflow:hidden;border-radius:8px;">
+                            <img src="@(featured.ImageUrl ?? "/images/blog-placeholder.png")" class="w-100 h-100" style="object-fit:cover;" />
+                        </div>
+                        <div class="card-body">
+                            <h2 class="fw-bold">@featured.Title</h2>
+                            <p class="text-muted">@featured.Author &bull; @featured.CreatedAt.ToString("dd MMM yyyy")</p>
+                            <p>@(featured.Summary ?? (featured.Content?.Length > 300 ? featured.Content.Substring(0, 300) + "..." : featured.Content))</p>
+                            <a asp-controller="Blog" asp-action="Details" asp-route-id="@featured.Id" class="btn btn-dark">Đọc tiếp</a>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        @foreach (var p in Model.Skip(1))
+                        {
+                            <div class="col-md-6">
+                                <div class="card h-100 shadow-sm border-0">
+                                    <div class="row g-0">
+                                        <div class="col-5">
+                                            <img src="@(p.ImageUrl ?? "/images/blog-placeholder.png")" class="img-fluid h-100" style="object-fit:cover;" />
+                                        </div>
+                                        <div class="col-7">
+                                            <div class="card-body">
+                                                <h5 class="card-title">@p.Title</h5>
+                                                <p class="text-muted small">@p.CreatedAt.ToString("dd MMM yyyy")</p>
+                                                <p class="card-text">@(p.Summary ?? (p.Content?.Length > 120 ? p.Content.Substring(0, 120) + "..." : p.Content))</p>
+                                                <a asp-controller="Blog" asp-action="Details" asp-route-id="@p.Id" class="stretched-link text-decoration-none">Xem chi tiết</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p>Chưa có bài viết nào.</p>
+                }
+            </div>
+
+            <div class="col-lg-4">
+                <div class="position-sticky" style="top:80px;">
+                    <div class="card mb-3 p-3">
+                        <h5>Tin mới nhất</h5>
+                        <ul class="list-unstyled mb-0">
+                            @if (Model != null)
+                            {
+                                foreach (var item in Model.Take(5))
+                                {
+                                    <li class="mb-2">
+                                        <a asp-controller="Blog" asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none">@item.Title</a>
+                                        <div class="text-muted small">@item.CreatedAt.ToString("dd MMM yyyy")</div>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </div>
+
+                    <div class="card p-3">
+                        <h5>Chủ đề phổ biến</h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a class="btn btn-outline-secondary btn-sm">Mẹo mua sắm</a>
+                            <a class="btn btn-outline-secondary btn-sm">Khuyến mãi</a>
+                            <a class="btn btn-outline-secondary btn-sm">Hướng dẫn</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

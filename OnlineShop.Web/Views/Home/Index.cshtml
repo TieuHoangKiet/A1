@@ -1,0 +1,156 @@
+﻿@model IEnumerable<OnlineShop.Web.Models.Product>
+
+@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+<!-- 🔹 Banner / Slider -->
+<div id="mainCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+    <div class="carousel-inner rounded-3 shadow">
+        <div class="carousel-item active">
+            <img src="https://via.placeholder.com/1200x400?text=Khuyen+Mai+Lon" class="d-block w-100" alt="Banner 1">
+            <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded">
+                <h3>Ưu đãi mùa lễ hội</h3>
+                <p>Giảm giá tới 50% cho tất cả sản phẩm</p>
+                <a href="#" class="btn btn-light btn-sm">Mua ngay</a>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src="https://via.placeholder.com/1200x400?text=San+Pham+Moi" class="d-block w-100" alt="Banner 2">
+            <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded">
+                <h3>Sản phẩm mới về</h3>
+                <p>Khám phá những xu hướng mới nhất</p>
+                <a href="#" class="btn btn-light btn-sm">Xem ngay</a>
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+</div>
+
+<!-- 🏷 Danh mục sản phẩm -->
+<section class="container mb-5">
+    <h2 class="text-center text-light fw-bold mb-4 text-uppercase border-bottom pb-2">🏷 Danh mục sản phẩm</h2>
+    <div class="row text-center g-4">
+        @{
+            var categories = new List<(string Name, string Image)>
+        {
+        ("Thời trang nam", "https://via.placeholder.com/200x200?text=Nam"),
+        ("Thời trang nữ", "https://via.placeholder.com/200x200?text=Nu"),
+        ("Giày dép", "https://via.placeholder.com/200x200?text=Giay"),
+        ("Phụ kiện", "https://via.placeholder.com/200x200?text=Phu+Kien"),
+        ("Đồng hồ", "https://via.placeholder.com/200x200?text=Dong+Ho"),
+        ("Mỹ phẩm", "https://via.placeholder.com/200x200?text=My+Pham")
+        };
+        }
+
+        @foreach (var c in categories)
+        {
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="card bg-dark border-light shadow-sm hover-scale">
+                    <img src="@c.Image" class="card-img-top rounded-top" alt="@c.Name">
+                    <div class="card-body p-2">
+                        <h6 class="text-white text-center">@c.Name</h6>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- 🌟 Sản phẩm nổi bật -->
+<section class="container mb-5">
+    <h2 class="text-center text-light fw-bold mb-4 text-uppercase border-bottom pb-2">🌟 Sản phẩm nổi bật</h2>
+    <div class="row g-4">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model.Take(6))
+            {
+                <div class="col-md-4 col-lg-3">
+                    <div class="card bg-dark text-white border-light h-100 shadow-sm">
+                        <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://via.placeholder.com/300x300?text=No+Image" : item.ImageUrl)"
+                             class="card-img-top" alt="@item.Name">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">@item.Name</h5>
+                            <p class="card-text text-warning fw-bold">@item.Price.ToString("N0") ₫</p>
+                            <a href="@Url.Action("Details", "Products", new { id = item.Id })" class="btn btn-outline-light btn-sm">Xem chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="text-center text-muted">Không có sản phẩm nào được tìm thấy.</div>
+        }
+    </div>
+</section>
+
+<!-- 🆕 Sản phẩm mới nhất -->
+<section class="container mb-5">
+    <h2 class="text-center text-light fw-bold mb-4 text-uppercase border-bottom pb-2">🆕 Sản phẩm mới nhất</h2>
+    <div class="row g-4">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model.OrderByDescending(x => x.Id).Take(6))
+            {
+                <div class="col-md-4 col-lg-3">
+                    <div class="card bg-dark text-white border-light h-100 shadow-sm">
+                        <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://via.placeholder.com/300x300?text=No+Image" : item.ImageUrl)"
+                             class="card-img-top" alt="@item.Name">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">@item.Name</h5>
+                            <p class="card-text text-warning fw-bold">@item.Price.ToString("N0") ₫</p>
+                            <a href="@Url.Action("Details", "Products", new { id = item.Id })" class="btn btn-outline-light btn-sm">Thêm vào giỏ</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="text-center text-muted">Không có sản phẩm nào được tìm thấy.</div>
+        }
+    </div>
+</section>
+
+<!-- 🔥 Khuyến mãi hot -->
+<section class="container mb-5">
+    <h2 class="text-center text-light fw-bold mb-4 text-uppercase border-bottom pb-2">🔥 Khuyến mãi hot</h2>
+    <div class="row g-4">
+        @if (Model != null && Model.Any())
+        {
+            var random = new Random();
+            foreach (var item in Model.Take(6))
+            {
+                var discount = random.Next(10, 40);
+                var discountedPrice = item.Price * (100 - discount) / 100;
+                <div class="col-md-4 col-lg-3">
+                    <div class="card bg-dark text-white border-light h-100 shadow-sm position-relative">
+                        <span class="badge bg-danger position-absolute top-0 start-0 m-2">-@discount%</span>
+                        <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://via.placeholder.com/300x300?text=No+Image" : item.ImageUrl)"
+                             class="card-img-top" alt="@item.Name">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">@item.Name</h5>
+                            <p class="card-text">
+                                <del class="text-secondary">@item.Price.ToString("N0") ₫</del>
+                                <span class="text-warning fw-bold">@discountedPrice.ToString("N0") ₫</span>
+                            </p>
+                            <a href="@Url.Action("Details", "Products", new { id = item.Id })" class="btn btn-outline-light btn-sm">Mua ngay</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="text-center text-muted">Không có sản phẩm nào được tìm thấy.</div>
+        }
+    </div>
+</section>
+
+

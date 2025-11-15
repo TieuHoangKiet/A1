@@ -1,0 +1,45 @@
+@model OnlineShop.Web.Models.PortViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <h1 class="fw-bold">@Model.Title</h1>
+                <p class="text-muted">@Model.Author &bull; @Model.CreatedAt.ToString("dd MMM yyyy")</p>
+
+                <div class="mb-4" style="height:420px;overflow:hidden;border-radius:8px;">
+                    <img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/images/blog-placeholder.png" : Model.ImageUrl)" class="w-100 h-100" style="object-fit:cover;" />
+                </div>
+
+                <div class="article-content">
+                    @if (!string.IsNullOrEmpty(Model.Content))
+                    {
+                        @Html.Raw(Model.Content)
+                    }
+                    else
+                    {
+                        <span class="text-muted">Không có n?i dung.</span>
+                    }
+                </div>
+
+                <div class="mt-4">
+                    <a asp-controller="Blog" asp-action="Index" class="btn btn-outline-secondary">Quay l?i</a>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card p-3">
+                    <h5>Bài vi?t liên quan</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">M?o ch?n mua laptop</a></li>
+                        <li><a href="#">Cách b?o qu?n pin</a></li>
+                        <li><a href="#">Xu h??ng n?m 2025</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

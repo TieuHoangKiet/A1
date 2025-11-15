@@ -1,0 +1,28 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<div class="container mt-5" style="max-width: 400px;">
+    <h3 class="text-center mb-4">Đăng nhập</h3>
+
+    <form asp-controller="Account" asp-action="Login" method="post">
+
+        <div class="form-group mb-3">
+            <label>Tên đăng nhập</label>
+            <input name="username" class="form-control" required />
+        </div>
+
+        <div class="form-group mb-3">
+            <label>Mật khẩu</label>
+            <input type="password" name="password" class="form-control" required />
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+        <div class="alert alert-danger">@ViewBag.Error</div>
+        }
+
+        <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+    </form>
+</div>

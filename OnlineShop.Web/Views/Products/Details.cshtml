@@ -1,0 +1,99 @@
+﻿@model OnlineShop.Web.Models.ProductDetailViewModel
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+}
+
+<div class="container my-5 bg-white text-dark">
+    <div class="row g-5 align-items-start">
+
+        <!-- Ảnh -->
+        <div class="col-md-5">
+            <img src="@(string.IsNullOrEmpty(Model.Product.ImageUrl)
+                    ? "https://via.placeholder.com/400x400?text=No+Image"
+                    : Model.Product.ImageUrl)"
+                 class="img-fluid rounded shadow-sm mb-3" alt="@Model.Product.Name" />
+
+            <div class="d-flex flex-wrap gap-2">
+                <img src="@(Model.Product.ImageUrl ?? "https://via.placeholder.com/80x80")" class="img-thumbnail" width="80" height="80">
+                <img src="@(Model.Product.ImageUrl ?? "https://via.placeholder.com/80x80")" class="img-thumbnail" width="80" height="80">
+            </div>
+        </div>
+
+        <!-- Chi tiết -->
+        <div class="col-md-7">
+            <h2 class="fw-bold">@Model.Product.Name</h2>
+            <p class="text-danger fs-4">@Model.Product.Price.ToString("N0") ₫</p>
+
+            <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-flex align-items-center">
+                <input type="hidden" name="id" value="@Model.Product.Id" />
+                <input type="hidden" name="name" value="@Model.Product.Name" />
+                <input type="hidden" name="price" value="@Model.Product.Price" />
+                <input type="hidden" name="thumbnailUrl" value="@Model.Product.ThumbnailUrl" />
+
+                <label class="me-2">Số lượng:</label>
+                <input type="number" min="1" name="quantity" value="1" class="form-control w-25 me-3" />
+
+                <button type="submit" class="btn btn-dark me-2">
+                    <i class="bi bi-cart"></i> Thêm vào giỏ
+                </button>
+            </form>
+
+            <a asp-controller="Cart" asp-action="Checkout" class="btn btn-outline-dark mt-3">Mua ngay</a>
+        </div>
+    </div>
+
+    <ul class="nav nav-tabs mt-5">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#desc">Mô tả</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#info">Thông tin</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#reviews">Đánh giá</button></li>
+    </ul>
+
+    <div class="tab-content border border-top-0 p-4 bg-light">
+        <div class="tab-pane fade show active" id="desc">
+            @Html.Raw(Model.Product.Description ?? "Chưa có mô tả sản phẩm.")
+        </div>
+
+        <div class="tab-pane fade" id="info">
+            <ul>
+                <li><strong>Tên:</strong> @Model.Product.Name</li>
+                <li><strong>Giá:</strong> @Model.Product.Price.ToString("N0") ₫</li>
+                <li><strong>Mã SP:</strong> @Model.Product.Id</li>
+                <li><strong>Danh mục:</strong> @Model.Product.Category?.Name</li>
+            </ul>
+        </div>
+
+        <div class="tab-pane fade" id="reviews">
+            @if (Model.Reviews.Any())
+            {
+                foreach (var r in Model.Reviews)
+                {
+            <div class="border-bottom mb-3 pb-2">
+                <strong>@r.UserName</strong> - <small>@r.Rating/5 ⭐</small>
+                <p>@r.Comment</p>
+            </div>
+                }
+            }
+            else
+            {
+            <p>Chưa có đánh giá nào.</p>
+            }
+        </div>
+    </div>
+
+    <h4 class="fw-bold mt-5">Sản phẩm liên quan</h4>
+    <div class="row g-4">
+        @foreach (var p in Model.RelatedProducts)
+        {
+        <div class="col-md-3">
+            <div class="card h-100 shadow-sm">
+                <img src="@(p.ImageUrl ?? "https://via.placeholder.com/300")" class="card-img-top" />
+                <div class="card-body text-center">
+                    <h6>@p.Name</h6>
+                    <p class="text-muted">@p.Price.ToString("N0") ₫</p>
+                    <a href="/Products/Details/@p.Id" class="btn btn-outline-dark btn-sm">Xem chi tiết</a>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</div>

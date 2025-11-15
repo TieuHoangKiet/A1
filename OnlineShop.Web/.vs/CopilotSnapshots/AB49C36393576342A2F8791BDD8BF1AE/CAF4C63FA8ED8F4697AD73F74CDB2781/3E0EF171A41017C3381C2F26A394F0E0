@@ -1,0 +1,15 @@
+﻿@model OnlineShop.Web.Models.PortViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container mt-4">
+    <h1>@Model.Title</h1>
+    <p class="text-muted">@Model.Author - @Model.CreatedAt.ToString("dd MMM yyyy")</p>
+
+    <img src="@(Model.ImageUrl ?? "/images/blog-placeholder.png")" class="img-fluid mb-3" style="max-height:400px;object-fit:cover" />
+
+    <div class="mb-4">@Html.Raw(Model.Content)</div>
+
+    <a asp-controller="Blog" asp-action="Index" class="btn btn-outline-secondary">Quay l?i</a>
+</div>
