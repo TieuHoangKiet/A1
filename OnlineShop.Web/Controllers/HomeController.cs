@@ -18,5 +18,14 @@ namespace OnlineShop.Web.Controllers
             var products = await _productService.GetProductsAsync();
             return View(products);
         }
+
+        // ======================================================
+        // THÊM PHƯƠNG THỨC NÀY VÀO
+        // ======================================================
+        public IActionResult About()
+        {
+            return View();
+        }
+        // ======================================================
     }
 }
